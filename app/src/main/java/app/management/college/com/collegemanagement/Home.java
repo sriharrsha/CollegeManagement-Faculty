@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -53,27 +54,38 @@ public class Home extends AppCompatActivity
     private View parent_view;
     private ViewPager mViewPager;
     private CredentialManager credentialManager;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         parent_view = findViewById(R.id.main_content);
         setSupportActionBar(toolbar);
         setTitle("Home");
-        menuSetup();
-        setupDrawerLayout();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(mViewPager);
+
         credentialManager = new CredentialManager(this);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         final View headerView = navView.inflateHeaderView(R.layout.nav_menu_header);
-
-
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
-        Toast.makeText(getApplicationContext(), refreshedToken, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), refreshedToken, Toast.LENGTH_LONG).show();
         Log.i("firebasetoken", refreshedToken);
         ImageView avatar = (ImageView) headerView.findViewById(R.id.avatar);
         final TextView nameLabel = (TextView) headerView.findViewById(R.id.profile_name);
@@ -179,13 +191,11 @@ public class Home extends AppCompatActivity
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void menuSetup() {
 
-    }
 
     @Override
     public void onBackPressed() {
@@ -222,16 +232,12 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         Log.d(DEBUG_TAG, id + " clicked");
-        //noinspection SimplifiableIfStatement
+
         if (id == R.id.logout) {
-            Log.d(DEBUG_TAG, "Logout button clicked");
-            credentialManager = new CredentialManager(Home.this);
-//            credentialManager.storeUser(credentialManager.getUserName(),null, false);
-            credentialManager.updateStatus(false);
-            credentialManager.clearAllCache();
+            Toast.makeText(getApplicationContext(),
+                    "logged out", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Home.this, LoginActivity.class);
             startActivity(i);
-            finish();
             return true;
         }
 
@@ -246,9 +252,8 @@ public class Home extends AppCompatActivity
 
         Log.d(DEBUG_TAG, id + " clicked");
         if (id == R.id.logout) {
-            Log.d(DEBUG_TAG, "Logout button clicked");
-            credentialManager = new CredentialManager(Home.this);
-            credentialManager.storeUser(credentialManager.getUserName(),null, false);
+            Toast.makeText(getApplicationContext(),
+                    "logged out", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Home.this, LoginActivity.class);
             startActivity(i);
             finish();
@@ -281,7 +286,7 @@ public class Home extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new profiletab(), "Profile");
+        adapter.addFragment(new profiletab(),"Profile");
         adapter.addFragment(new hometab(), "Home");
         adapter.addFragment(new newstab(), "News");
         viewPager.setAdapter(adapter);

@@ -183,7 +183,7 @@ public class profiletab extends Fragment {
                 // set item content in view
                 linearLayout.addView(Designation);
                 ((TextView) Designation.findViewById(R.id.description_1)).setText(dataList.getString("Designation") + dataList.getString("Department"));
-                ((ImageView) Designation.findViewById(R.id.profileRowIcon)).setImageResource(R.drawable.ic_dept);
+                ((ImageView) Designation.findViewById(R.id.profileRowIcon)).setImageResource(R.drawable.ic_bookmark_outline);
             }
             if(dataList.getString("Email") != "null"){
                 View Email  = inflater.inflate(R.layout.row_profile_about_us, linearLayout, false);

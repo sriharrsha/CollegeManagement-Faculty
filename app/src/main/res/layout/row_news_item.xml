@@ -33,6 +33,7 @@
                 android:layout_marginRight="@dimen/spacing_middle"
                 android:layout_marginTop="@dimen/spacing_middle"
                 android:text="Subject"
+                android:textSize="19dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:textColor="@color/material_grey_800" />
 
