@@ -1,63 +1,63 @@
 package app.management.college.com.collegemanagement;
 
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.res.Resources;
-        import android.graphics.Color;
-        import android.net.ConnectivityManager;
-        import android.net.NetworkInfo;
-        import android.os.AsyncTask;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.text.format.Time;
-        import android.util.Log;
-        import android.view.Gravity;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.Window;
-        import android.view.animation.AlphaAnimation;
-        import android.widget.Button;
-        import android.widget.DatePicker;
-        import android.widget.FrameLayout;
-        import android.widget.ImageView;
-        import android.widget.LinearLayout;
-        import android.widget.PopupWindow;
-        import android.widget.TextView;
-        import android.widget.Toast;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.format.Time;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.animation.AlphaAnimation;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import com.imanoweb.calendarview.CalendarListener;
-        import com.imanoweb.calendarview.CustomCalendarView;
-        import com.imanoweb.calendarview.DayDecorator;
-        import com.imanoweb.calendarview.DayView;
+import com.imanoweb.calendarview.CalendarListener;
+import com.imanoweb.calendarview.CustomCalendarView;
+import com.imanoweb.calendarview.DayDecorator;
+import com.imanoweb.calendarview.DayView;
 
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-        import java.io.BufferedReader;
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.io.InputStreamReader;
-        import java.io.Reader;
-        import java.io.Serializable;
-        import java.io.UnsupportedEncodingException;
-        import java.net.HttpURLConnection;
-        import java.net.URL;
-        import java.text.DateFormat;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Calendar;
-        import java.util.Date;
-        import java.util.List;
-        import java.util.Locale;
-        import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-        import app.management.college.com.collegemanagement.model.GlobalData;
-        import app.management.college.com.collegemanagement.model.InternalExamItem;
-        import app.management.college.com.collegemanagement.model.util.Converter;
-        import app.management.college.com.collegemanagement.util.CredentialManager;
-        import app.management.college.com.collegemanagement.util.ErrorToaster;
-        import app.management.college.com.collegemanagement.util.NetworkUtils;
+import app.management.college.com.collegemanagement.model.GlobalData;
+import app.management.college.com.collegemanagement.model.InternalExamItem;
+import app.management.college.com.collegemanagement.model.util.Converter;
+import app.management.college.com.collegemanagement.util.CredentialManager;
+import app.management.college.com.collegemanagement.util.ErrorToaster;
+import app.management.college.com.collegemanagement.util.NetworkUtils;
 
 public class AppliedLeaves extends AppCompatActivity implements Serializable {
     private static final String DEBUG_TAG = "Applied Leaves";
@@ -70,7 +70,6 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
     FrameLayout progressBarHolder;
-    private CredentialManager credentialManager;
     CustomCalendarView calendarView;
     Exception error;
     String from = "";
@@ -78,19 +77,21 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
     DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     DateFormat keyFormatter = new SimpleDateFormat("dd-MM-yyyy");
     Calendar showingCalander = Calendar.getInstance(Locale.getDefault());
-
-
-
-    LinearLayout layoutOfPopup; LinearLayout layoutInnerOfPopup; PopupWindow popupMessage; Button popupButton, insidePopupButton; TextView popupText; TextView toText;
-    DatePicker fromDatePicker; DatePicker toDatePicker;
-    String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-
+    LinearLayout layoutOfPopup;
+    LinearLayout layoutInnerOfPopup;
+    PopupWindow popupMessage;
+    Button popupButton, insidePopupButton;
+    TextView popupText;
+    TextView toText;
+    DatePicker fromDatePicker;
+    DatePicker toDatePicker;
+    String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     //Initialize calendar with date
     Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
     Calendar currentTime = Calendar.getInstance(Locale.getDefault());
-
     Map<Date, List<InternalExamItem>> finalData;
     Map<String, List<InternalExamItem>> finalSData = null;
+    private CredentialManager credentialManager;
 
     @Override
     public void onBackPressed (){
@@ -356,6 +357,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                 setTheTasks(null,null,0);
                 finalSData = null;
                 credentialManager.setInternalExamsCache("");
+                Log.d("applied", "setTheInternalExamScreen: " + dataList);
             } else {
                 Map<String, List<InternalExamItem>> obj = new Converter().convertInternalExamsItemsString(result);
                 finalSData = obj;
@@ -418,6 +420,60 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
         NetworkUtils.updateFromNToDatePickers(toDatePicker, NetworkUtils.getLastDateOfMonth(showingCalander));
     }
 
+    private String downloadUrl(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        int len = 50000;
+
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            if (myurl.contains("AuthenticateRequest")) conn.setRequestMethod("POST");
+            CredentialManager credentialManager = new CredentialManager(ctx);
+//            GlobalData globalData = new GlobalData();
+            conn.setRequestProperty("TOKEN", credentialManager.getToken());
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            String contentAsString = readIt(is, len);
+            return contentAsString;
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "error is --: " + e.toString());
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return "";
+    }
+
+    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        /*char[] buffer = new char[len];
+        reader.read(buffer);
+        return new String(buffer);*/
+        BufferedReader r = new BufferedReader(reader);
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+        return total.toString();
+    }
+
     // Network code
     private class AppliedLeavesTask extends AsyncTask<String, Void, String> {
         private JSONArray dataList;
@@ -472,6 +528,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                     credentialManager.setInternalExamsCache(result);
                     credentialManager.setInternalExamsFromCache("01-" + (fromDatePicker.getMonth() + 1) + "-" + fromDatePicker.getYear());
                     setTheInternalExamScreen(result);
+                    Log.d("applied leave ", "onPostExecute: result " + result);
                     Log.d(DEBUG_TAG, "onPostExecute: from network" );
                 } else {
 
@@ -483,61 +540,6 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
             /*Intent i = new Intent(LoginActivity.this, Home.class);
             startActivity(i);*/
         }
-    }
-
-    private String downloadUrl(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 50000;
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            if(myurl.contains("AuthenticateRequest")) conn.setRequestMethod("POST");
-            CredentialManager credentialManager = new CredentialManager(ctx);
-//            GlobalData globalData = new GlobalData();
-            conn.setRequestProperty("TOKEN", credentialManager.getToken());
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
-            return contentAsString;
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } catch (Exception e) {
-            Log.d(DEBUG_TAG, "error is --: " + e.toString());
-        }
-        finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return "";
-    }
-
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        /*char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);*/
-        BufferedReader r = new BufferedReader(reader);
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return  total.toString();
     }
 
     private class ColorDecorator implements DayDecorator {

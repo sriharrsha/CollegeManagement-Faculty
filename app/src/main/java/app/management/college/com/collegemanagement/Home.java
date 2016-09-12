@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,12 +51,12 @@ public class Home extends AppCompatActivity
 
     private static final String DEBUG_TAG = "Home";
     boolean firstExit = true;
+    FrameLayout progressBarHolder;
     private DrawerLayout drawerLayout;
     private View parent_view;
     private ViewPager mViewPager;
     private CredentialManager credentialManager;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,8 @@ public class Home extends AppCompatActivity
         setContentView(R.layout.activity_landing_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
+        
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

@@ -31,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     boolean urlRequired = true;
     Exception error = null;
     boolean firstExit = true;
+    FrameLayout progressBarHolder;
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -93,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         setContentView(R.layout.activity_login);
 
-
+        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         textView = (TextView) findViewById(R.id.test);
@@ -125,7 +127,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBarHolder.setVisibility(View.VISIBLE);
                 attemptLogin();
+                showProgress(true);
+
             }
         });
 
@@ -184,7 +189,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         universityUrl = url;
         boolean cancel = false;
         View focusView = null;
-
+        progressBarHolder.setVisibility(View.GONE);
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
@@ -452,6 +457,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (true) {
                             // success
                             // Set the token and time for future use.
+
                             requestInitiatedTime = new Time();
                             GlobalData globalData = new GlobalData();
                             globalData.setLastNetworkCall(requestInitiatedTime);
@@ -468,13 +474,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             // user logged in and moving to next screen
                             Intent i = new Intent(LoginActivity.this, Home.class);
                             startActivity(i);
-
+                            Toast.makeText(ctx, "successfully logged in", Toast.LENGTH_LONG).show();
+                            progressBarHolder.setVisibility(View.VISIBLE);
                         } else {
 
                         }
                     } else {
-                        mEmailView.setError(getString(R.string.error_invalid_credentials));
+
+                        mEmailView.setError(getString(R.string.error_invalid_wrong_user));
+                        mPasswordView.setError(getString(R.string.error_invalid_wrong_password));
                         Toast.makeText(ctx, "Username/Password incorrect", Toast.LENGTH_LONG).show();
+                        progressBarHolder.setVisibility(View.GONE);
                     }
                 } catch (Exception t) {
                     Toast.makeText(ctx, "JSON exception" + t.getMessage(), Toast.LENGTH_LONG).show();

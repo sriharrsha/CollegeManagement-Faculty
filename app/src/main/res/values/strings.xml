@@ -19,6 +19,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_credentials">This field is required</string>
+    <string name="error_invalid_wrong_user">Username not Matched</string>
+    <string name="error_invalid_wrong_password">Password Mismatch</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

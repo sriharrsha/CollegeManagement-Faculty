@@ -10,14 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="app.management.college.com.collegemanagement.LoginActivity">
 
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/login_form"
@@ -25,28 +17,28 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:focusable="true"
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_gravity="center"
                 android:id="@+id/universityLogo"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:textColor="@android:color/white"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_gravity="center"
                 android:layout_margin="50dp"
-                android:src="@drawable/cm"/>
+                android:src="@drawable/cm"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/white" />
 
             <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
                 <AutoCompleteTextView
                     android:id="@+id/email"
@@ -60,9 +52,9 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
                 <EditText
                     android:id="@+id/password"
@@ -81,9 +73,9 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/urlCon"
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
                 <EditText
                     android:id="@+id/url"
@@ -99,10 +91,10 @@
             </android.support.design.widget.TextInputLayout>
 
             <CheckBox
-                android:layout_margin="10dp"
                 android:id="@+id/rememberMe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:checked="true"
                 android:text="Remember Me"/>
 
@@ -112,10 +104,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:padding="10dp"
-                android:textColor="@color/white"
-                android:text="@string/action_sign_in"
                 android:background="@color/colorButton"
+                android:padding="10dp"
+                android:text="@string/action_sign_in"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
             <TextView
@@ -123,6 +115,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <FrameLayout
+                android:id="@+id/progressBarHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.4"
+                android:animateLayoutChanges="true"
+                android:background="#000000"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/login_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:indeterminate="true" />
+            </FrameLayout>
 
         </LinearLayout>
     </ScrollView>
