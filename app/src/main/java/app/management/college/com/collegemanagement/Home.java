@@ -160,6 +160,11 @@ public class Home extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.container);
 //        mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setBackgroundColor(Color.parseColor("#253b80"));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#179bd7"));
+        tabLayout.getTabAt(1).select();
+
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
