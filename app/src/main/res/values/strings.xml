@@ -60,7 +60,7 @@
         <item>Yesterday</item>
         <item>Yesterday</item>
     </string-array>
-    <string name="title_activity_landing_drawer">LandingDrawer</string>
+    <string name="title_activity_home">Home</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

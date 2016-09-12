@@ -16,8 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="37dp"
         android:layout_marginStart="37dp"
-        android:elevation="8dp"
-        android:src="@drawable/profile" />
+        android:elevation="8dp" />
 
     <TextView
         android:id="@+id/profile_name"
