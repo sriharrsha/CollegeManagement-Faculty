@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Timer;
@@ -39,14 +38,18 @@ import app.management.college.com.collegemanagement.util.ErrorToaster;
  */
 public class ActivitySplash extends AppCompatActivity {
 
+    public static final String TIME_TABLE = "timetable";
+    public static final String INVIGILATION = "invigilation";
+    public static final String APPLY_LEAVE = "applyleave";
+    public static final String APPLIED_LEAVES = "appliedleaves";
+    public static final String EXTERNAL_EXAMS = "externalexams";
+    public static final String INTERNAL_EXAMS = "internalexams";
+    public static final String FEEDBACK = "feedback";
     private static final String DEBUG_TAG = "ActivitySplash";
-    private String loginURL;
     Exception error = null;
     Context ctx;
     int response = 0;
-
-
-
+    private String loginURL;
     private CredentialManager credentialManager = new CredentialManager(ActivitySplash.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +103,52 @@ public class ActivitySplash extends AppCompatActivity {
                 } else {
                     //TODO: rethink
                     Log.d(DEBUG_TAG, "autoLogin: No network so moving to Landing to show earlier data");
-                    Intent i = new Intent(ActivitySplash.this, Home.class);
-                    startActivity(i);
-                    finish();
+
+                    if (getIntent().getExtras().size() > 0) {
+                        Intent i;
+                        Toast.makeText(getApplicationContext(), getIntent().getExtras().getString("module"), Toast.LENGTH_SHORT).show();
+
+                        switch (getIntent().getExtras().getString("module")) {
+
+                            case TIME_TABLE:
+                                i = new Intent(getApplicationContext(), TimeTableV3.class);
+                                startActivity(i);
+                                break;
+                            case INVIGILATION:
+                                i = new Intent(getApplicationContext(), InvigilationDetails.class);
+                                startActivity(i);
+                                break;
+                            case APPLY_LEAVE:
+                                i = new Intent(getApplicationContext(), ApplyLeave.class);
+                                startActivity(i);
+                                break;
+                            case APPLIED_LEAVES:
+                                i = new Intent(getApplicationContext(), AppliedLeaves.class);
+                                startActivity(i);
+                                break;
+                            case EXTERNAL_EXAMS:
+                                i = new Intent(getApplicationContext(), ExternalExams.class);
+                                startActivity(i);
+                                break;
+                            case INTERNAL_EXAMS:
+                                i = new Intent(getApplicationContext(), InternalExams.class);
+                                startActivity(i);
+                                break;
+                            case FEEDBACK:
+                                i = new Intent(getApplicationContext(), FeedbackList.class);
+                                startActivity(i);
+                                break;
+                            default:
+                                i = new Intent(ActivitySplash.this, Home.class);
+                                startActivity(i);
+                        }
+
+                    } else {
+                        Intent i = new Intent(ActivitySplash.this, Home.class);
+                        startActivity(i);
+                        finish();
+                    }
+
                 }
 
             }
@@ -148,8 +194,53 @@ public class ActivitySplash extends AppCompatActivity {
         splash.startAnimation(animation1);
     }
 
+    // Given a URL, establishes an HttpUrlConnection and retrieves
+    // the web page content as a InputStream, which it returns as
+    // a string.
+    private String downloadUrl(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        int len = 50000;
 
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            response = conn.getResponseCode();
+            Log.d(DEBUG_TAG, "The response is: " + response);
+            is = conn.getInputStream();
 
+            // Convert the InputStream into a string
+            String contentAsString = readIt(is);
+            return contentAsString;
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    // Reads an InputStream and converts it to a String.
+    public String readIt(InputStream stream) throws IOException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        BufferedReader r = new BufferedReader(reader);
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+        return total.toString();
+    }
 
     // Network code
     private class LoginTask extends AsyncTask<String, Void, String> {
@@ -204,53 +295,6 @@ public class ActivitySplash extends AppCompatActivity {
                 return;
             }
         }
-    }
-
-    // Given a URL, establishes an HttpUrlConnection and retrieves
-    // the web page content as a InputStream, which it returns as
-    // a string.
-    private String downloadUrl(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 50000;
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            response = conn.getResponseCode();
-            Log.d(DEBUG_TAG, "The response is: " + response);
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = readIt(is);
-            return contentAsString;
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-    }
-    // Reads an InputStream and converts it to a String.
-    public String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        BufferedReader r = new BufferedReader(reader);
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return  total.toString();
     }
 
 }

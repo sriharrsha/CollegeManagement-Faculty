@@ -3,8 +3,9 @@ package app.management.college.com.collegemanagement.api;
 import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
-import retrofit2.GsonConverterFactory;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Sri Harrsha
@@ -34,6 +35,10 @@ public class ServiceGenerator {
     }
 
     public static <S> S createService(Class<S> serviceClass) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+// set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(logging);
         Retrofit retrofit = builder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
     }

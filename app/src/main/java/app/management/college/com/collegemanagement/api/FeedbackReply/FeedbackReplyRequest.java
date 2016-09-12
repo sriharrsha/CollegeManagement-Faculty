@@ -1,56 +1,90 @@
-
 package app.management.college.com.collegemanagement.api.FeedbackReply;
 
-import java.util.HashMap;
-import java.util.Map;
-public class FeedbackReplyRequest {
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class FeedbackReplyRequest implements Parcelable {
+
+    public static final Creator<FeedbackReplyRequest> CREATOR = new Creator<FeedbackReplyRequest>() {
+        @Override
+        public FeedbackReplyRequest createFromParcel(Parcel in) {
+            return new FeedbackReplyRequest(in);
+        }
+
+        @Override
+        public FeedbackReplyRequest[] newArray(int size) {
+            return new FeedbackReplyRequest[size];
+        }
+    };
+    @SerializedName("RefID")
+    @Expose
     private Integer refID;
+    @SerializedName("Reply")
+    @Expose
     private String reply;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    public FeedbackReplyRequest(Parcel in) {
+        reply = in.readString();
+    }
+
+    public FeedbackReplyRequest() {
+
+    }
 
     /**
-     * 
+     *
      * @return
-     *     The refID
+     * The refID
      */
     public Integer getRefID() {
         return refID;
     }
 
     /**
-     * 
+     *
      * @param refID
-     *     The RefID
+     * The RefID
      */
     public void setRefID(Integer refID) {
         this.refID = refID;
     }
 
     /**
-     * 
+     *
      * @return
-     *     The reply
+     * The reply
      */
     public String getReply() {
         return reply;
     }
 
     /**
-     * 
+     *
      * @param reply
-     *     The Reply
+     * The Reply
      */
     public void setReply(String reply) {
         this.reply = reply;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    @Override
+    public String toString() {
+        return "FeedbackReplyRequest{" +
+                "refID=" + refID +
+                ", reply='" + reply + '\'' +
+                '}';
     }
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reply);
+    }
 }

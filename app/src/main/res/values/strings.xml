@@ -1,14 +1,5 @@
 <resources>
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-    </string-array>
+
     <string name="app_name">College Management</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
@@ -42,23 +33,21 @@
     <string-array name="menu_name">
         <item>Time Table</item>
         <item>Invigilation</item>
-        <item>Attendance</item>
-        <item>Feedback</item>
-        <item>External Exams</item>
-        <item>Internal Exams</item>
         <item>Apply Leave</item>
         <item>Applied Leaves</item>
+        <item>External Exams</item>
+        <item>Internal Exams</item>
+        <item>Feedback</item>
     </string-array>
 
     <integer-array name="menu_photos">
         <item>@drawable/menu_icon_timetable</item>
         <item>@drawable/menu_icon_invigilation</item>
         <item>@drawable/menu_icon_attendance</item>
-        <item>@drawable/menu_icon_feedback</item>
+        <item>@drawable/menu_icon_class_swapping</item>
         <item>@drawable/menu_icon_external_exam</item>
         <item>@drawable/menu_icon_internal_exam</item>
-        <item>@drawable/menu_icon_class_swapping</item>
-        <item>@drawable/menu_icon_activity_event_notification</item>
+        <item>@drawable/menu_icon_feedback</item>
     </integer-array>
 
     <string-array name="groups_date">

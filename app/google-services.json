@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "882735734864",
+    "firebase_url": "https://campusmanagement-5a395.firebaseio.com",
+    "project_id": "campusmanagement-5a395",
+    "storage_bucket": "campusmanagement-5a395.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:882735734864:android:cd7ab5e2eca41d58",
+        "android_client_info": {
+          "package_name": "app.management.college.com.collegemanagement"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "882735734864-2sr8d9putp557vc723qapsmm59lnk0rp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeSeTkimS-GXszmubzRlfbwuzz2ZUaJFE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

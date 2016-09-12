@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.util.List;
@@ -34,13 +35,14 @@ public class FeedbackFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    List<DataList> data;
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private CollegeManagementApiService collegeApiService;
     private CredentialManager credentialManager;
-    List<DataList> data;
     private FeedbackRecyclerViewAdapter feedbackRecyclerViewAdapter;
+    private FrameLayout progressBarHolder;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,6 +69,8 @@ public class FeedbackFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         collegeApiService = ServiceGenerator.createService(CollegeManagementApiService.class);
+        progressBarHolder = (FrameLayout) getActivity().findViewById(R.id.progressBarHolder);
+        progressBarHolder.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -91,38 +95,47 @@ public class FeedbackFragment extends Fragment {
         firstcall.enqueue(new Callback<RegularLoginResponse>() {
 
             @Override
-            public void onResponse(Response<RegularLoginResponse> response) {
-                final Call<FeedbackListResponse> call=collegeApiService.getFeedbackList(response.body().getToken(),0);
-                call.enqueue(new Callback<FeedbackListResponse>() {
-                    @Override
-                    public void onResponse(Response<FeedbackListResponse> response) {
-                       try{
-                           data=response.body().getDataList();
-                           Log.i("feed",response.body().getDataList().toString());
-                           feedbackRecyclerViewAdapter.mValues=data;
-                           feedbackRecyclerViewAdapter.notifyDataSetChanged();
-                       }
-                       catch (NullPointerException e){
-                           Toast.makeText(getContext(),"No Data from Server",Toast.LENGTH_SHORT).show();
-                       }
+            public void onResponse(Call<RegularLoginResponse> call, Response<RegularLoginResponse> response) {
+                Log.i("token", response.body().toString());
 
+                final Call<FeedbackListResponse> feedbacklistcall = collegeApiService.getFeedbackList(response.body().getToken(), 0);
+                feedbacklistcall.enqueue(new Callback<FeedbackListResponse>() {
+                    @Override
+                    public void onResponse(Call<FeedbackListResponse> call, Response<FeedbackListResponse> response) {
+                        try {
+                            Log.i("feed", response.body().toString());
+                            data = response.body().getDataList();
+                            feedbackRecyclerViewAdapter.mValues = data;
+                            feedbackRecyclerViewAdapter.notifyDataSetChanged();
+                            progressBarHolder.setVisibility(View.INVISIBLE);
+
+                        } catch (NullPointerException e) {
+                            Toast.makeText(getContext(), "No Data from Server", Toast.LENGTH_SHORT).show();
+                            progressBarHolder.setVisibility(View.INVISIBLE);
+
+                        }
                     }
 
                     @Override
-                    public void onFailure(Throwable t) {
+                    public void onFailure(Call<FeedbackListResponse> call, Throwable t) {
                         Toast.makeText(getContext(),t.toString(),Toast.LENGTH_SHORT).show();
+                        progressBarHolder.setVisibility(View.INVISIBLE);
                     }
+
                 });
+
 
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<RegularLoginResponse> call, Throwable t) {
                 Toast.makeText(getContext(),t.toString(),Toast.LENGTH_SHORT).show();
+                progressBarHolder.setVisibility(View.INVISIBLE);
+
             }
+
+
         });
-
-
 
 
 

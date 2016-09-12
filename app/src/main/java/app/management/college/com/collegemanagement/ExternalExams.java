@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
@@ -70,23 +69,24 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
     FrameLayout progressBarHolder;
-    private CredentialManager credentialManager;
     CustomCalendarView calendarView;
     Exception error;
     Calendar showingCalander = Calendar.getInstance(Locale.getDefault());
     DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     DateFormat keyFormatter = new SimpleDateFormat("dd-MM-yyyy");
     String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-
-
-    LinearLayout layoutOfPopup; LinearLayout layoutInnerOfPopup; PopupWindow popupMessage; Button popupButton, insidePopupButton; TextView popupText; TextView toText;
-    DatePicker fromDatePicker; DatePicker toDatePicker;
-
-    //Initialize calendar with date
+    LinearLayout layoutOfPopup;
+    LinearLayout layoutInnerOfPopup;
+    PopupWindow popupMessage;
+    Button popupButton, insidePopupButton;
+    TextView popupText;
+    TextView toText;
+    DatePicker fromDatePicker;
+    DatePicker toDatePicker;     //Initialize calendar with date
     Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
-
     Map<Date, List<ExternalExamItem>> finalData;
     Map<String, List<ExternalExamItem>> finalSData;
+    private CredentialManager credentialManager;
 
     @Override
     public void onBackPressed (){
@@ -283,7 +283,7 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
         insidePopupButton.setText("OK");
         insidePopupButton.setTextColor(Color.parseColor("#FFFFFF"));
         insidePopupButton.setBackgroundColor(Color.parseColor("#03A7E9"));
-        popupText.setText("Month");;
+        popupText.setText("Month");
         popupText.setTextColor(Color.parseColor("#000000"));
         popupText.setTextSize(16);
         popupText.setPadding(0, 0, 0, 10);
@@ -291,7 +291,7 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
         fromDatePicker = new DatePicker(this);
         toDatePicker = new DatePicker(this);
         fromDatePicker.setCalendarViewShown(false);
-        View dayId = (View)fromDatePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
+        View dayId = fromDatePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
         if(dayId != null) dayId.setVisibility(View.GONE);
         toDatePicker.setCalendarViewShown(false);
         layoutOfPopup.addView(popupText);
@@ -317,6 +317,7 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
             String url = credentialManager.getUniversityUrl() + "/ExaminationService.svc/GetExternalExamSchedule?FromDate="
                     + NetworkUtils.getFormattedDate(NetworkUtils.getFirstDateOfMonth(showingCalander)) +
                     "&ToDate=" + NetworkUtils.getFormattedDate(NetworkUtils.getLastDateOfMonth(showingCalander));
+            url = url.replaceAll("%20", "-");
             Log.d(DEBUG_TAG, "makeNetworkCall: url: " + url);
             progressBarHolder.setVisibility(View.VISIBLE);
             new ExternalExamsTask().execute(loginURL, url);
@@ -331,81 +332,7 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
         ConnectivityManager connMgr = (ConnectivityManager)
                 ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
-    }
-
-    // Network code
-    private class ExternalExamsTask extends AsyncTask<String, Void, String> {
-        private JSONArray dataList;
-
-        public void useLoginToken(String result){
-            if(new ErrorToaster().toastError(error,ctx)) return;
-            try {
-                JSONObject resultJSON = new JSONObject(result);
-                Log.d("resultJSON ", result + "");
-                Intent i;
-                if(resultJSON.getInt("ServiceResult") == 0) {
-                    Log.d(DEBUG_TAG, "onPostExecute: The user is logged in ==> use: " + credentialManager.getUserName() +
-                            ", password: " + credentialManager.getPassword());
-                    Time requestInitiatedTime = new Time();
-                    GlobalData globalData = new GlobalData();
-                    globalData.setLastNetworkCall(requestInitiatedTime);
-                    globalData.setToken(resultJSON.getString("Token"));
-                    credentialManager.setToken(resultJSON.getString("Token"));
-                    Log.d(DEBUG_TAG, "The token is: " + resultJSON.getString("Token"));
-                } else {
-                    Log.d(DEBUG_TAG, "onPostExecute: The user is not valid ==> use: " + credentialManager.getUserName() +
-                            ", password: " + credentialManager.getPassword() );
-                    i = new Intent(ExternalExams.this, LoginActivity.class);
-
-                    startActivity(i);
-                    // kill current activity
-                    finish();
-                }
-            } catch (Exception t) {
-                error = t;
-                Log.e("useLoginToken", t.getMessage() + " Could not parse malformed JSON: \"" + result + "\"");
-            }
-        }
-        @Override
-        protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                String loginData = downloadUrl(urls[0]);
-                Log.d(DEBUG_TAG, "doInBackground: " + loginData);
-                useLoginToken(loginData);
-                return downloadUrl(urls[1]);
-            } catch (Exception e) {
-                error = e;
-                Log.d(DEBUG_TAG, "The response is: " + e.toString());
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            progressBarHolder.setVisibility(View.GONE);
-            try {
-                JSONObject resultJSON = new JSONObject(result);
-                if(resultJSON.getInt("ServiceResult") == 0) {
-                    credentialManager.setExternalExamsCache(result);
-                    credentialManager.setExternalExamsFromCache("01-" + (fromDatePicker.getMonth() + 1) + "-" + fromDatePicker.getYear());
-                    setTheExternalExamScreen(result);
-                    Log.d(DEBUG_TAG, "onPostExecute: from network" );
-                } else {
-
-                }
-            } catch (Exception t) {
-                if(result.equals("Unable to retrieve web page. URL may be invalid.")){
-
-                } else {
-                    error = t;
-                    Log.e("JSON error", t + " Could not parse malformed JSON: \"" + result + "\"");
-                }
-            }
-        }
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     private  void setPickers(){
@@ -506,7 +433,7 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
         return "";
     }
 
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+    public String readIt(InputStream stream, int len) throws IOException {
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
         /*char[] buffer = new char[len];
@@ -519,6 +446,81 @@ public class ExternalExams extends AppCompatActivity implements Serializable {
             total.append(line);
         }
         return  total.toString();
+    }
+
+    // Network code
+    private class ExternalExamsTask extends AsyncTask<String, Void, String> {
+        private JSONArray dataList;
+
+        public void useLoginToken(String result) {
+            if (new ErrorToaster().toastError(error, ctx)) return;
+            try {
+                JSONObject resultJSON = new JSONObject(result);
+                Log.d("resultJSON ", result + "");
+                Intent i;
+                if (resultJSON.getInt("ServiceResult") == 0) {
+                    Log.d(DEBUG_TAG, "onPostExecute: The user is logged in ==> use: " + credentialManager.getUserName() +
+                            ", password: " + credentialManager.getPassword());
+                    Time requestInitiatedTime = new Time();
+                    GlobalData globalData = new GlobalData();
+                    globalData.setLastNetworkCall(requestInitiatedTime);
+                    globalData.setToken(resultJSON.getString("Token"));
+                    credentialManager.setToken(resultJSON.getString("Token"));
+                    Log.d(DEBUG_TAG, "The token is: " + resultJSON.getString("Token"));
+                } else {
+                    Log.d(DEBUG_TAG, "onPostExecute: The user is not valid ==> use: " + credentialManager.getUserName() +
+                            ", password: " + credentialManager.getPassword());
+                    i = new Intent(ExternalExams.this, LoginActivity.class);
+
+                    startActivity(i);
+                    // kill current activity
+                    finish();
+                }
+            } catch (Exception t) {
+                error = t;
+                Log.e("useLoginToken", t.getMessage() + " Could not parse malformed JSON: \"" + result + "\"");
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                String loginData = downloadUrl(urls[0]);
+                Log.d(DEBUG_TAG, "doInBackground: " + loginData);
+                useLoginToken(loginData);
+                return downloadUrl(urls[1]);
+            } catch (Exception e) {
+                error = e;
+                Log.d(DEBUG_TAG, "The response is: " + e.toString());
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            progressBarHolder.setVisibility(View.GONE);
+            try {
+                JSONObject resultJSON = new JSONObject(result);
+                if (resultJSON.getInt("ServiceResult") == 0) {
+                    credentialManager.setExternalExamsCache(result);
+                    credentialManager.setExternalExamsFromCache("01-" + (fromDatePicker.getMonth() + 1) + "-" + fromDatePicker.getYear());
+                    setTheExternalExamScreen(result);
+                    Log.d(DEBUG_TAG, "onPostExecute: from network");
+                } else {
+
+                }
+            } catch (Exception t) {
+                if (result.equals("Unable to retrieve web page. URL may be invalid.")) {
+
+                } else {
+                    error = t;
+                    Log.e("JSON error", t + " Could not parse malformed JSON: \"" + result + "\"");
+                }
+            }
+        }
     }
 
     private class ColorDecorator implements DayDecorator {

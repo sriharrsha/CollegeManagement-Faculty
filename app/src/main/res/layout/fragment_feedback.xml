@@ -6,33 +6,34 @@
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Message Title"
         android:id="@+id/message_title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Not Replied"
-        android:textColor="@android:color/holo_red_dark"
-        android:id="@+id/message_status"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:text="Message Title"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
+        android:id="@+id/message_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/grey_back"
+        android:text="Not Replied"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/holo_red_dark" />
+
+    <TextView
+        android:id="@+id/message_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is the message"
-        android:id="@+id/message_content"
-        android:singleLine="true"
-        android:layout_below="@+id/message_title"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/message_title"
+        android:singleLine="true"
+        android:text="This is the message" />
 </RelativeLayout>

@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -32,11 +33,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +46,6 @@ import app.management.college.com.collegemanagement.model.GlobalData;
 import app.management.college.com.collegemanagement.model.util.Converter;
 import app.management.college.com.collegemanagement.util.CredentialManager;
 import app.management.college.com.collegemanagement.util.ErrorToaster;
-
 import lib.MultiSelectionSpinner;
 
 public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinner.OnMultipleItemsSelectedListener, DialogInterface.OnClickListener {
@@ -52,31 +53,31 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
 
     Context ctx;
     FrameLayout progressBarHolder;
-    private CredentialManager credentialManager;
     Exception error;
     MultiSelectionSpinner multiSelectionSpinner;
     String loginURL = "";
     String[] approverArray;
     String[] leaveTypeArray;
-
-
+    String fromAndToTime = "notset";
+    String fromDate = "";
+    String toDate = "";
+    String fromTime = "";
+    String toTime = "";
+    String errorMessage = "Fill the form properly,Check dates";
+    private CredentialManager credentialManager;
     //UI References
     private EditText fromDateEtxt;
     private EditText fromTimeEtxt;
     private EditText toDateEtxt;
     private EditText toTimeEtxt;
-
-    String fromDate = "";
-    String toDate = "";
-    String fromTime = "";
-    String toTime = "";
-
     private DatePickerDialog fromDatePickerDialog;
     private DatePickerDialog toDatePickerDialog;
-
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat dateURLFormatter;
-    String errorMessage = "Fill required details";
+    private int fromHour;
+    private int fromMin;
+    private int toHour;
+    private int toMinute;
 
     @Override
     public void onBackPressed (){
@@ -141,9 +142,43 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
         });
     }
 
-    public boolean validate(){
-        if(fromDate == "" || toDate == "") return false;
-        return true;
+    public boolean validate() {
+        if (fromDate == "" || toDate == "") {
+            return false;
+        } else if (fromAndToTime.equalsIgnoreCase("both")) {
+            java.util.Date juDate = new Date();
+            DateTime dt = new DateTime(juDate);
+            DateTime fdt = null;
+            DateTime tdt = null;
+
+            try {
+                fdt = new DateTime(dateURLFormatter.parse(fromDate)).withTime(fromHour, fromMin, 0, 0);
+                tdt = new DateTime(dateURLFormatter.parse(toDate)).withTime(toHour, toMinute, 0, 0);
+                if (fdt.isBefore(tdt)) {
+                    Log.i("DATE", "correct date");
+                    Log.i("DATE", fromDate);
+                    Log.i("DATE", String.valueOf(fdt.toDate().toString()));
+                    Log.i("DATE", toDate);
+                    Log.i("DATE", String.valueOf(tdt.toDate().toString()));
+                    return true;
+
+                } else {
+                    Log.i("DATE", "wrong date");
+                    Log.i("DATE", fromDate);
+                    Log.i("DATE", String.valueOf(fdt.toDate().toString()));
+                    Log.i("DATE", toDate);
+                    Log.i("DATE", String.valueOf(tdt.toDate().toString()));
+                    return false;
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e("DATE", fromDate);
+                Toast.makeText(getApplicationContext(), "Pick Date First", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return false;
     }
 
 
@@ -161,10 +196,14 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
                 int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mTimePicker;
+
                 mTimePicker = new TimePickerDialog(ApplyLeave.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         fromTimeEtxt.setText(selectedHour + ":" + selectedMinute);
+                        fromHour = selectedHour;
+                        fromMin = selectedMinute;
+                        fromAndToTime = "one";
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
@@ -190,7 +229,39 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
                 mTimePicker = new TimePickerDialog(ApplyLeave.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+//                        java.util.Date juDate = new Date();
+//                        DateTime dt = new DateTime(juDate);
+//                        DateTime fdt = null;
+//                        DateTime tdt=null;
+//                        try {
+//                            fdt =new DateTime(dateURLFormatter.parse(fromDate));
+//                            tdt =new DateTime(dateURLFormatter.parse(toDate));
+//                            Log.i("DATE",fromDate);
+//                            Log.i("DATE", String.valueOf(fdt.toDate().toString()));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                            Log.e("DATE",fromDate);
+//                            Toast.makeText(getApplicationContext(),"Pick Date First",Toast.LENGTH_SHORT).show();
+//                        }
+
+//                        if (tdt.toLocalDate().equals(fdt.toLocalDate())) {//if to date is same as from date
+//                            if (selectedHour<fdt.getHourOfDay() ) {//if hour is passed
+//                                Toast.makeText(getApplicationContext(),"Pick proper time",Toast.LENGTH_SHORT).show();//show error
+//                            }else if(selectedHour==fdt.getHourOfDay()){//if hour is same
+//                                if(selectedHour<fdt.getMinuteOfHour()){//but minutes are passed
+//                                    Toast.makeText(getApplicationContext(),"Pick proper time",Toast.LENGTH_SHORT).show();//show error
+//                                }
+//                            }else {
+//                                toTimeEtxt.setText(selectedHour + ":" + selectedMinute);
+//                            }
+//                        }else{
                         toTimeEtxt.setText(selectedHour + ":" + selectedMinute);
+                        toHour = selectedHour;
+                        toMinute = selectedMinute;
+                        if (fromAndToTime.equalsIgnoreCase("one")) {
+                            fromAndToTime = "both";
+                        }
+                        //                     }
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
@@ -204,15 +275,18 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
         fromDateEtxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                fromDatePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 fromDatePickerDialog.show();
             }
         });
         toDateEtxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                toDatePickerDialog.show();
+                if (fromDate.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please Enter From Date", Toast.LENGTH_SHORT).show();
+                } else {
+                    toDatePickerDialog.show();
+                }
             }
         });
 
@@ -224,6 +298,8 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
                 newDate.set(year, monthOfYear, dayOfMonth);
                 fromDateEtxt.setText(dateFormatter.format(newDate.getTime()));
                 fromDate = dateURLFormatter.format(newDate.getTime());
+                toDatePickerDialog.getDatePicker().setMinDate(newDate.getTimeInMillis());
+
                 Log.d(DEBUG_TAG, "onDateSet: " + fromDate);
             }
 
@@ -239,6 +315,7 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
             }
 
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
     }
 
 
@@ -260,8 +337,7 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
         ConnectivityManager connMgr = (ConnectivityManager)
                 ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     @Override
@@ -279,6 +355,59 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
 
     }
 
+    private String downloadUrl(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        int len = 50000;
+
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            if (myurl.contains("AuthenticateRequest")) conn.setRequestMethod("POST");
+            CredentialManager credentialManager = new CredentialManager(ctx);
+//            GlobalData globalData = new GlobalData();
+            conn.setRequestProperty("TOKEN", credentialManager.getToken());
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            String contentAsString = readIt(is, len);
+            return contentAsString;
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "error is --: " + e.toString());
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return "";
+    }
+
+    public String readIt(InputStream stream, int len) throws IOException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        /*char[] buffer = new char[len];
+        reader.read(buffer);
+        return new String(buffer);*/
+        BufferedReader r = new BufferedReader(reader);
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+        return total.toString();
+    }
 
     // Network code
     private class ApplyLeaveTask extends AsyncTask<String, Void, String> {
@@ -420,62 +549,5 @@ public class ApplyLeave extends AppCompatActivity implements MultiSelectionSpinn
                 }
             }
         }
-    }
-
-
-
-    private String downloadUrl(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 50000;
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            if(myurl.contains("AuthenticateRequest")) conn.setRequestMethod("POST");
-            CredentialManager credentialManager = new CredentialManager(ctx);
-//            GlobalData globalData = new GlobalData();
-            conn.setRequestProperty("TOKEN", credentialManager.getToken());
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
-            return contentAsString;
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } catch (Exception e) {
-            Log.d(DEBUG_TAG, "error is --: " + e.toString());
-        }
-        finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return "";
-    }
-
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        /*char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);*/
-        BufferedReader r = new BufferedReader(reader);
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return  total.toString();
     }
 }

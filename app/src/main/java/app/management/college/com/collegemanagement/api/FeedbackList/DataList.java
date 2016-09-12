@@ -1,27 +1,62 @@
 
 package app.management.college.com.collegemanagement.api.FeedbackList;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class DataList implements Parcelable {
 
+    public static final Creator<DataList> CREATOR = new Creator<DataList>() {
+        @Override
+        public DataList createFromParcel(Parcel in) {
+            return new DataList(in);
+        }
+
+        @Override
+        public DataList[] newArray(int size) {
+            return new DataList[size];
+        }
+    };
+    @SerializedName("Date")
+    @Expose
     private String date;
+    @SerializedName("FeedbackPerson")
+    @Expose
     private String feedbackPerson;
+    @SerializedName("FileContent")
+    @Expose
     private Object fileContent;
+    @SerializedName("FileName")
+    @Expose
     private String fileName;
+    @SerializedName("FilePath")
+    @Expose
     private String filePath;
+    @SerializedName("Message")
+    @Expose
     private String message;
+    @SerializedName("MessageTitle")
+    @Expose
     private String messageTitle;
+    @SerializedName("MessageType")
+    @Expose
     private Integer messageType;
+    @SerializedName("RefID")
+    @Expose
     private Integer refID;
+    @SerializedName("Reply")
+    @Expose
     private String reply;
+    @SerializedName("StudentID")
+    @Expose
     private Integer studentID;
+    @SerializedName("UserType")
+    @Expose
     private String userType;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     protected DataList(Parcel in) {
         date = in.readString();
@@ -50,18 +85,6 @@ public class DataList implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<DataList> CREATOR = new Creator<DataList>() {
-        @Override
-        public DataList createFromParcel(Parcel in) {
-            return new DataList(in);
-        }
-
-        @Override
-        public DataList[] newArray(int size) {
-            return new DataList[size];
-        }
-    };
 
     /**
      * 
@@ -270,6 +293,13 @@ public class DataList implements Parcelable {
         return userType;
     }
 
+    /**
+     * @param userType The UserType
+     */
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
     @Override
     public String toString() {
         return "DataList{" +
@@ -285,25 +315,6 @@ public class DataList implements Parcelable {
                 ", reply='" + reply + '\'' +
                 ", studentID=" + studentID +
                 ", userType='" + userType + '\'' +
-                ", additionalProperties=" + additionalProperties +
                 '}';
     }
-
-    /**
-     * 
-     * @param userType
-     *     The UserType
-     */
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
 }

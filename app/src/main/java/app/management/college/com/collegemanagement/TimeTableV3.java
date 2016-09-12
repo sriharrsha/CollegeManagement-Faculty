@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
@@ -57,10 +56,15 @@ import app.management.college.com.collegemanagement.util.NetworkUtils;
 public class TimeTableV3 extends FragmentActivity {
 
     private static final String DEBUG_TAG = "TimeTableV3";
-    private Map<String, List<ClassData>> data;
-    LinearLayout layoutOfPopup; LinearLayout layoutInnerOfPopup; PopupWindow popupMessage; Button popupButton, insidePopupButton; TextView popupText; TextView toText;
-    DatePicker fromDatePicker; DatePicker toDatePicker;
-    String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    LinearLayout layoutOfPopup;
+    LinearLayout layoutInnerOfPopup;
+    PopupWindow popupMessage;
+    Button popupButton, insidePopupButton;
+    TextView popupText;
+    TextView toText;
+    DatePicker fromDatePicker;
+    DatePicker toDatePicker;
+    String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     CustomCalendarView calendarView;
     Context ctx;
     int currentMonth = 0;
@@ -72,6 +76,7 @@ public class TimeTableV3 extends FragmentActivity {
     String loginURL;
     DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     DateFormat keyFormatter = new SimpleDateFormat("dd-MM-yyyy");
+    private Map<String, List<ClassData>> data;
     private Map<String, String> sendIntent;
 
     @Override
@@ -133,7 +138,7 @@ public class TimeTableV3 extends FragmentActivity {
         insidePopupButton.setText("OK");
         insidePopupButton.setTextColor(Color.parseColor("#FFFFFF"));
         insidePopupButton.setBackgroundColor(Color.parseColor("#03A7E9"));
-        popupText.setText("Month");;
+        popupText.setText("Month");
         popupText.setTextColor(Color.parseColor("#000000"));
         popupText.setTextSize(16);
         popupText.setPadding(0, 0, 0, 10);
@@ -141,7 +146,7 @@ public class TimeTableV3 extends FragmentActivity {
         fromDatePicker = new DatePicker(this);
         toDatePicker = new DatePicker(this);
         fromDatePicker.setCalendarViewShown(false);
-        View dayId = (View)fromDatePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
+        View dayId = fromDatePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
         if(dayId != null) dayId.setVisibility(View.GONE);
         toDatePicker.setCalendarViewShown(false);
         layoutOfPopup.addView(popupText);
@@ -332,7 +337,7 @@ public class TimeTableV3 extends FragmentActivity {
             String url = credentialManager.getUniversityUrl() + "/AccademicService.svc/GetClassSchedule?StartDate="
                     + NetworkUtils.getFormattedDate(NetworkUtils.getFirstDateOfMonth(showingCalander)) +
                     "&EndDate=" + NetworkUtils.getFormattedDate(NetworkUtils.getLastDateOfMonth(showingCalander));
-
+            url = url.replaceAll("%20", "-");
             progressBarHolder.setVisibility(View.VISIBLE);
             new TimeTableTask().execute(loginURL, url);
             setPickers();
@@ -346,13 +351,60 @@ public class TimeTableV3 extends FragmentActivity {
         ConnectivityManager connMgr = (ConnectivityManager)
                 ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     private  void setPickers(){
         NetworkUtils.updateFromNToDatePickers(fromDatePicker, NetworkUtils.getFirstDateOfMonth(showingCalander));
         NetworkUtils.updateFromNToDatePickers(toDatePicker, NetworkUtils.getLastDateOfMonth(showingCalander));
+    }
+
+    private String downloadUrl(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+        int len = 50000;
+
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("TOKEN", credentialManager.getToken());
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            String contentAsString = readIt(is, len);
+            return contentAsString;
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "error is --: " + e.toString());
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return "";
+    }
+
+    public String readIt(InputStream stream, int len) throws IOException {
+        Reader reader = null;
+        reader = new InputStreamReader(stream, "UTF-8");
+        BufferedReader r = new BufferedReader(reader);
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+        return total.toString();
     }
 
     // Network code
@@ -418,55 +470,6 @@ public class TimeTableV3 extends FragmentActivity {
                 Log.e("JSON error", t + " Could not parse malformed JSON: \"" + result + "\"");
             }
         }
-    }
-
-    private String downloadUrl(String myurl) throws IOException {
-        InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 50000;
-
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("TOKEN", credentialManager.getToken());
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
-            is = conn.getInputStream();
-
-            // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
-            return contentAsString;
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
-        } catch (Exception e) {
-            Log.d(DEBUG_TAG, "error is --: " + e.toString());
-        }
-        finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return "";
-    }
-
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        BufferedReader r = new BufferedReader(reader);
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return  total.toString();
     }
 
     private class ColorDecorator implements DayDecorator {

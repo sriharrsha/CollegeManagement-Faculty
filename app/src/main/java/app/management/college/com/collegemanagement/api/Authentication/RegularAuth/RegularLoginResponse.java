@@ -1,44 +1,20 @@
 
 package app.management.college.com.collegemanagement.api.Authentication.RegularAuth;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
-import java.util.Map;
+public class RegularLoginResponse {
 
-public class RegularLoginResponse implements Parcelable {
-
+    @SerializedName("AuthenticationResult")
+    @Expose
     private Integer authenticationResult;
+    @SerializedName("ServiceResult")
+    @Expose
     private Integer serviceResult;
+    @SerializedName("Token")
+    @Expose
     private String token;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    protected RegularLoginResponse(Parcel in) {
-        token = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(token);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<RegularLoginResponse> CREATOR = new Creator<RegularLoginResponse>() {
-        @Override
-        public RegularLoginResponse createFromParcel(Parcel in) {
-            return new RegularLoginResponse(in);
-        }
-
-        @Override
-        public RegularLoginResponse[] newArray(int size) {
-            return new RegularLoginResponse[size];
-        }
-    };
 
     /**
      * 
@@ -85,47 +61,21 @@ public class RegularLoginResponse implements Parcelable {
         return token;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RegularLoginResponse that = (RegularLoginResponse) o;
-
-        if (!authenticationResult.equals(that.authenticationResult)) return false;
-        if (!serviceResult.equals(that.serviceResult)) return false;
-        if (!token.equals(that.token)) return false;
-        return additionalProperties.equals(that.additionalProperties);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = authenticationResult.hashCode();
-        result = 31 * result + serviceResult.hashCode();
-        result = 31 * result + token.hashCode();
-        result = 31 * result + additionalProperties.hashCode();
-        return result;
-    }
-
     /**
      * 
      * @param token
-
      *     The Token
      */
     public void setToken(String token) {
         this.token = token;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    @Override
+    public String toString() {
+        return "RegularLoginResponse{" +
+                "authenticationResult=" + authenticationResult +
+                ", serviceResult=" + serviceResult +
+                ", token='" + token + '\'' +
+                '}';
     }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
-
-
 }

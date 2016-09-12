@@ -1,5 +1,7 @@
 package app.management.college.com.collegemanagement;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +13,11 @@ import java.util.List;
 
 import app.management.college.com.collegemanagement.FeedbackFragment.OnListFragmentInteractionListener;
 import app.management.college.com.collegemanagement.api.FeedbackList.DataList;
-import app.management.college.com.collegemanagement.dummy.DummyContent.DummyItem;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class FeedbackRecyclerViewAdapter extends RecyclerView.Adapter<FeedbackRecyclerViewAdapter.ViewHolder> {
 
-    List<DataList> mValues= Collections.emptyList();
     private final OnListFragmentInteractionListener mListener;
+    List<DataList> mValues = Collections.emptyList();
 
     public FeedbackRecyclerViewAdapter(List<DataList> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -40,7 +36,12 @@ public class FeedbackRecyclerViewAdapter extends RecyclerView.Adapter<FeedbackRe
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getMessageTitle());
         holder.mContentView.setText(mValues.get(position).getMessage());
-
+        if (mValues.get(position).getReply() == null || mValues.get(position).getReply().isEmpty()) {
+            holder.mStatus.setText("Not Replied");
+        } else {
+            holder.mStatus.setText("Replied");
+            holder.mStatus.setTextColor(ColorStateList.valueOf(Color.GREEN));
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +69,7 @@ public class FeedbackRecyclerViewAdapter extends RecyclerView.Adapter<FeedbackRe
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final TextView mStatus;
         public DataList mItem;
 
         public ViewHolder(View view) {
@@ -75,6 +77,7 @@ public class FeedbackRecyclerViewAdapter extends RecyclerView.Adapter<FeedbackRe
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.message_title);
             mContentView = (TextView) view.findViewById(R.id.message_content);
+            mStatus = (TextView) view.findViewById(R.id.message_status);
         }
 
 

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
@@ -83,49 +82,6 @@ public class profiletab extends Fragment {
         }
     }
 
-
-
-    // Network code
-    private class ProfileTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                GlobalData globalData = new GlobalData();
-                downloadUrl(urls[0]);
-                return downloadUrl(urls[1]);
-            } catch (Exception e) {
-                Log.d(DEBUG_TAG, "The response is: " + e.toString());
-                return "Unable to retrieve web page. URL may be invalid.";
-            }
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
-
-//            credentialManager = new CredentialManager(this);
-            try {
-                JSONObject resultJSON = new JSONObject(result);
-                Log.e("resultJSON ", result + "");
-                if(resultJSON.getInt("ServiceResult") == 0) {
-                    credentialManager.setProfileCache(result);
-                    // success
-                    // Set the token and time for future use.
-                    setTheProfileScreen(result);
-                    Log.d(DEBUG_TAG, "onPostExecute: from network" );
-                } else {
-
-                }
-            } catch (Exception t) {
-                Log.e("JSON error", t + " Could not parse malformed JSON: \"" + result + "\"");
-            }
-            /*Intent i = new Intent(LoginActivity.this, Home.class);
-            startActivity(i);*/
-        }
-    }
-
     // Given a URL, establishes an HttpUrlConnection and retrieves
 // the web page content as a InputStream, which it returns as
 // a string.
@@ -168,8 +124,9 @@ public class profiletab extends Fragment {
         }
         return "";
     }
+
     // Reads an InputStream and converts it to a String.
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+    public String readIt(InputStream stream, int len) throws IOException {
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
         /*char[] buffer = new char[len];
@@ -203,6 +160,7 @@ public class profiletab extends Fragment {
                     addressString += address.get(key) + ", ";
                 }
             }*/
+
 
             if(address.get("Address") != "null") addressString += address.get("Address") + ", ";
             if(address.get("State") != "null") addressString += address.get("State") + ", ";
@@ -263,5 +221,47 @@ public class profiletab extends Fragment {
         }
 
 
+    }
+
+    // Network code
+    private class ProfileTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                GlobalData globalData = new GlobalData();
+                downloadUrl(urls[0]);
+                return downloadUrl(urls[1]);
+            } catch (Exception e) {
+                Log.d(DEBUG_TAG, "The response is: " + e.toString());
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+
+
+//            credentialManager = new CredentialManager(this);
+            try {
+                JSONObject resultJSON = new JSONObject(result);
+                Log.e("resultJSON ", result + "");
+                if (resultJSON.getInt("ServiceResult") == 0) {
+                    credentialManager.setProfileCache(result);
+                    // success
+                    // Set the token and time for future use.
+                    setTheProfileScreen(result);
+                    Log.d(DEBUG_TAG, "onPostExecute: from network");
+                } else {
+
+                }
+            } catch (Exception t) {
+                Log.e("JSON error", t + " Could not parse malformed JSON: \"" + result + "\"");
+            }
+            /*Intent i = new Intent(LoginActivity.this, Home.class);
+            startActivity(i);*/
+        }
     }
 }

@@ -34,40 +34,11 @@ import app.management.college.com.collegemanagement.widget.CircleTransform;
 public class MenuGridAdapter extends RecyclerView.Adapter<MenuGridAdapter.ViewHolder> implements Filterable {
 
     private final int mBackground;
-
+    private final TypedValue mTypedValue = new TypedValue();
     private List<MenuItem> original_items = new ArrayList<>();
     private List<MenuItem> filtered_items = new ArrayList<>();
     private ItemFilter mFilter = new ItemFilter();
-
-    private final TypedValue mTypedValue = new TypedValue();
-
     private Context ctx;
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // each data item is just a string in this case
-        public TextView title;
-        public TextView content;
-        public ImageView image;
-        public LinearLayout clickListener;
-
-        public ViewHolder(View v) {
-            super(v);
-            title = (TextView) v.findViewById(R.id.title);
-//            content = (TextView) v.findViewById(R.id.content);
-            image = (ImageView) v.findViewById(R.id.image);
-            clickListener = (LinearLayout) v.findViewById(R.id.clickListener);
-        }
-
-        @Override
-        public void onClick(View v) {
-
-            Log.e("emoveeee",  getPosition() + " " + v.getId());
-        }
-    }
-
-    public Filter getFilter() {
-        return mFilter;
-    }
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MenuGridAdapter(Context ctx, List<MenuItem> items) {
@@ -76,6 +47,10 @@ public class MenuGridAdapter extends RecyclerView.Adapter<MenuGridAdapter.ViewHo
         filtered_items = items;
         ctx.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
         mBackground = mTypedValue.resourceId;
+    }
+
+    public Filter getFilter() {
+        return mFilter;
     }
 
     @Override
@@ -108,6 +83,28 @@ public class MenuGridAdapter extends RecyclerView.Adapter<MenuGridAdapter.ViewHo
     @Override
     public long getItemId(int position) {
         return filtered_items.get(position).getId();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        // each data item is just a string in this case
+        public TextView title;
+        public TextView content;
+        public ImageView image;
+        public LinearLayout clickListener;
+
+        public ViewHolder(View v) {
+            super(v);
+            title = (TextView) v.findViewById(R.id.title);
+//            content = (TextView) v.findViewById(R.id.content);
+            image = (ImageView) v.findViewById(R.id.image);
+            clickListener = (LinearLayout) v.findViewById(R.id.clickListener);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Log.e("emoveeee", getPosition() + " " + v.getId());
+        }
     }
 
     private class ItemFilter extends Filter {
@@ -157,8 +154,12 @@ public class MenuGridAdapter extends RecyclerView.Adapter<MenuGridAdapter.ViewHo
             }
             if(position == 1){
                 i = new Intent(ctx, InvigilationDetails.class);
-            }if(position==3) {
-                i = new Intent(ctx, FeedbackList.class);
+            }
+            if (position == 2) {
+                i = new Intent(ctx, ApplyLeave.class);
+            }
+            if (position == 3) {
+                i = new Intent(ctx, AppliedLeaves.class);
             }
             if(position == 4){
                 i = new Intent(ctx, ExternalExams.class);
@@ -166,13 +167,11 @@ public class MenuGridAdapter extends RecyclerView.Adapter<MenuGridAdapter.ViewHo
             if(position == 5){
                 i = new Intent(ctx, InternalExams.class);
             }
-            if(position == 6){
-                i = new Intent(ctx, ApplyLeave.class);
+            if (position == 6) {
+                i = new Intent(ctx, FeedbackList.class);
             }
-            if(position == 7){
-                i = new Intent(ctx, AppliedLeaves.class);
-            }
+
             if(i != null) ctx.startActivity(i);
         }
-    };
+    }
 }
