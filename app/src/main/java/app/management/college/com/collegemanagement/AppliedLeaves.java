@@ -245,7 +245,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                         startActivity(i);
                         finish();
                     } else {
-                        Toast.makeText(AppliedLeaves.this, "No Exam Scheduled on this date", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AppliedLeaves.this, "No Leaves  Scheduled on this date", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
