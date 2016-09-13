@@ -43,13 +43,13 @@
     </string-array>
 
     <integer-array name="menu_photos">
-        <item>@drawable/icon_time2</item>
-        <item>@drawable/icon_inv2</item>
-        <item>@drawable/icon_app2</item>
-        <item>@drawable/icon_appl2</item>
-        <item>@drawable/icon_ext2</item>
-        <item>@drawable/icon_int2</item>
-        <item>@drawable/icon_fee2</item>
+        <item>@drawable/icon_timetable</item>
+        <item>@drawable/icon_invigilation</item>
+        <item>@drawable/icon_applyleave</item>
+        <item>@drawable/icon_appliedleaves</item>
+        <item>@drawable/icon_externalexam</item>
+        <item>@drawable/icon_internalexam</item>
+        <item>@drawable/icon_feedback</item>
     </integer-array>
 
     <string-array name="groups_date">

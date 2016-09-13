@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View view) {
                 progressBarHolder.setVisibility(View.VISIBLE);
                 attemptLogin();
-                showProgress(true);
+
 
             }
         });
