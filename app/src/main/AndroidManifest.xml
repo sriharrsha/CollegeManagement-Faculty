@@ -38,6 +38,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".FeedbackList"
+            android:label="Feedback">
+            <intent-filter>
+                <action android:name="FEEDBACK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
@@ -47,11 +55,18 @@
         <activity
             android:name=".Home"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".TimeTable" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".TimeTable">
+
+        </activity>
         <activity
             android:name=".AttendanceForClass"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".InvigilationDetails"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -66,7 +81,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TimeTableV3"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="TIMETABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".TimeTableV2SingleDetails"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -88,7 +108,12 @@
         <activity
             android:name=".ApplyLeave"
             android:label="@string/title_activity_apply_leave"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="APPLY_LEAVE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ApplyLeaveAlternativeSelection"
             android:label="@string/title_activity_apply_leave_alternative_selection"
@@ -98,12 +123,18 @@
             android:label="@string/title_activity_applied_leaves"
             android:parentActivityName=".Home"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="APPLIED_LEAVES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Home" />
         </activity>
-        <activity android:name=".AppliedLeavesDetails" />
-        <activity android:name=".FeedbackList" />
+        <activity android:name=".AppliedLeavesDetails">
+
+        </activity>
+
         <activity android:name=".FeedbackReply"></activity>
     </application>
 

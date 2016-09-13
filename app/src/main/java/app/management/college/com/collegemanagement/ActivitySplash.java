@@ -108,38 +108,51 @@ public class ActivitySplash extends AppCompatActivity {
                         Intent i;
                         Toast.makeText(getApplicationContext(), getIntent().getExtras().getString("module"), Toast.LENGTH_SHORT).show();
 
-                        switch (getIntent().getExtras().getString("module")) {
+                        switch (getIntent().getStringExtra("module")) {
 
                             case TIME_TABLE:
                                 i = new Intent(getApplicationContext(), TimeTableV3.class);
+                                Toast.makeText(getApplicationContext(), TIME_TABLE, Toast.LENGTH_SHORT).show();
                                 startActivity(i);
                                 break;
                             case INVIGILATION:
                                 i = new Intent(getApplicationContext(), InvigilationDetails.class);
+                                Toast.makeText(getApplicationContext(), INVIGILATION, Toast.LENGTH_SHORT).show();
                                 startActivity(i);
                                 break;
                             case APPLY_LEAVE:
                                 i = new Intent(getApplicationContext(), ApplyLeave.class);
+                                Toast.makeText(getApplicationContext(), APPLY_LEAVE, Toast.LENGTH_SHORT).show();
+
                                 startActivity(i);
                                 break;
                             case APPLIED_LEAVES:
                                 i = new Intent(getApplicationContext(), AppliedLeaves.class);
+                                Toast.makeText(getApplicationContext(), APPLIED_LEAVES, Toast.LENGTH_SHORT).show();
+
                                 startActivity(i);
                                 break;
                             case EXTERNAL_EXAMS:
                                 i = new Intent(getApplicationContext(), ExternalExams.class);
+                                Toast.makeText(getApplicationContext(), EXTERNAL_EXAMS, Toast.LENGTH_SHORT).show();
+
                                 startActivity(i);
                                 break;
                             case INTERNAL_EXAMS:
                                 i = new Intent(getApplicationContext(), InternalExams.class);
+                                Toast.makeText(getApplicationContext(), INTERNAL_EXAMS, Toast.LENGTH_SHORT).show();
+
                                 startActivity(i);
                                 break;
                             case FEEDBACK:
                                 i = new Intent(getApplicationContext(), FeedbackList.class);
+                                Toast.makeText(getApplicationContext(), FEEDBACK, Toast.LENGTH_SHORT).show();
+
                                 startActivity(i);
                                 break;
                             default:
                                 i = new Intent(ActivitySplash.this, Home.class);
+                                Toast.makeText(getApplicationContext(), "DEFAULT", Toast.LENGTH_SHORT).show();
                                 startActivity(i);
                         }
 

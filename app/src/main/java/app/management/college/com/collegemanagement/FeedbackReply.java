@@ -26,6 +26,7 @@ public class FeedbackReply extends AppCompatActivity {
     DataList messagedata;
     FeedbackReplyRequest reply = null;
     private TextView repliedTextView;
+    private CredentialManager credentialManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,8 @@ public class FeedbackReply extends AppCompatActivity {
             reply = new FeedbackReplyRequest();
             reply.setReply(feedback.trim());
             reply.setRefID(messagedata.getRefID());
+            credentialManager = new CredentialManager(this);
+            ServiceGenerator.changeApiBaseUrl(credentialManager.getUniversityUrl());
             final CollegeManagementApiService collegeManagementApiService = ServiceGenerator.createService(CollegeManagementApiService.class);
 
 

@@ -68,6 +68,8 @@ public class FeedbackFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+        credentialManager = new CredentialManager(getActivity());
+        ServiceGenerator.changeApiBaseUrl(credentialManager.getUniversityUrl());
         collegeApiService = ServiceGenerator.createService(CollegeManagementApiService.class);
         progressBarHolder = (FrameLayout) getActivity().findViewById(R.id.progressBarHolder);
         progressBarHolder.setVisibility(View.VISIBLE);

@@ -108,7 +108,8 @@ public class Home extends AppCompatActivity
             }
         });
 
-
+        credentialManager = new CredentialManager(this);
+        ServiceGenerator.changeApiBaseUrl(credentialManager.getUniversityUrl());
         final CollegeManagementApiService collegeApiService = ServiceGenerator.createService(CollegeManagementApiService.class);
         Call<RegularLoginResponse> firstcall = collegeApiService.doRegularLogin(credentialManager.getUserName(), credentialManager.getPassword());
         firstcall.enqueue(new Callback<RegularLoginResponse>() {
