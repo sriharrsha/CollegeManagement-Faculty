@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import app.management.college.com.collegemanagement.model.AppliedLeavesItem;
 import app.management.college.com.collegemanagement.model.ClassData;
 import app.management.college.com.collegemanagement.model.ExternalExamItem;
 import app.management.college.com.collegemanagement.model.Faculty;
@@ -350,6 +351,7 @@ public class Converter {
         return finalData;
     }
 
+    //internal exam item code
     public Map<String, List<InternalExamItem>> convertInternalExamsItemsString(String result) {
 
         Map<String, List<InternalExamItem>> finalData = new LinkedHashMap<String, List<InternalExamItem>>();
@@ -391,47 +393,7 @@ public class Converter {
         return finalData;
     }
 
-    public Map<String, List<InternalExamItem>> convertAppliedLeavesItemsString(String result) {
 
-        Map<String, List<InternalExamItem>> finalData = new LinkedHashMap<String, List<InternalExamItem>>();;
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            JSONArray dataList = resultJSON.getJSONArray("DataList");
-            for (int i = 0; i < dataList.length(); i++) {
-
-
-                JSONObject data = (JSONObject) dataList.get(i);
-                Log.d(DEBUG_TAG, "convertInternalExamsItemsString: yesss " + data);
-                String s = data.getString("ScheduleDate").substring(6, data.getString("ScheduleDate").length() - 2);
-                if(s.indexOf("+") > 0) s = s.substring(0,s.indexOf("+"));
-                long l = Long.parseLong(s);
-                Date d = new Date(l);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(d);
-                String month = "" + (cal.get(Calendar.MONTH));
-                String ds = keyFormatter.format(cal.getTime());
-
-                List<InternalExamItem> InternalExamItem = new ArrayList<>();
-                if(finalData.size() == 0 ) {
-                    InternalExamItem.add(convertInternalExamItem(data));
-                    finalData.put(ds, InternalExamItem);
-                } else if(!finalData.containsKey(ds)){
-                    InternalExamItem.add(convertInternalExamItem(data));
-                    finalData.put(ds, InternalExamItem);
-                }
-                else if(finalData.containsKey(ds)){
-                    InternalExamItem = finalData.get(ds);
-                    InternalExamItem.add(convertInternalExamItem(data));
-                    finalData.put(ds, InternalExamItem);
-                }
-            }
-        }
-        catch (Exception e) {
-            Log.d(DEBUG_TAG, "convertInternalExamsItemsString: " + e);
-        }
-        Log.d(DEBUG_TAG, "convertInternalExamsItemsString: finalData " + finalData);
-        return finalData;
-    }
 
     private InternalExamItem convertInternalExamItem(JSONObject item) {
         InternalExamItem internalExamItem = new InternalExamItem();
@@ -501,10 +463,153 @@ public class Converter {
         }
         send += "]}";
 
-        Log.d(DEBUG_TAG, "internalExamItemstoJson: " + send);
+        Log.d(DEBUG_TAG, "Applied leaves: " + send);
         return send;
     }
 
+//    applied leaved item code
+
+    public Map<String, List<AppliedLeavesItem>> convertAppliedLeavesItemsString(String result) {
+
+        Map<String, List<AppliedLeavesItem>> finalData = new LinkedHashMap<String, List<AppliedLeavesItem>>();
+        ;
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            JSONArray dataList = resultJSON.getJSONArray("DataList");
+            for (int i = 0; i < dataList.length(); i++) {
+
+
+                JSONObject data = (JSONObject) dataList.get(i);
+                Log.d(DEBUG_TAG, "convertAppliedLeavesItemsString: yesss " + data);
+                String s = data.getString("ScheduleDate").substring(6, data.getString("ScheduleDate").length() - 2);
+                if (s.indexOf("+") > 0) s = s.substring(0, s.indexOf("+"));
+                long l = Long.parseLong(s);
+                Date d = new Date(l);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(d);
+                String month = "" + (cal.get(Calendar.MONTH));
+                String ds = keyFormatter.format(cal.getTime());
+
+                List<AppliedLeavesItem> AppliedLeaveItem = new ArrayList<>();
+                if (finalData.size() == 0) {
+                    AppliedLeaveItem.add((AppliedLeavesItem) convertAppliedLeavesItemsString(String.valueOf(data)));
+                    finalData.put(ds, AppliedLeaveItem);
+                } else if (!finalData.containsKey(ds)) {
+                    AppliedLeaveItem.add((AppliedLeavesItem) convertAppliedLeavesItemsString(String.valueOf(data)));
+                    finalData.put(ds, AppliedLeaveItem);
+                } else if (finalData.containsKey(ds)) {
+                    AppliedLeaveItem = finalData.get(ds);
+                    AppliedLeaveItem.add((AppliedLeavesItem) convertAppliedLeavesItemsString(String.valueOf(data)));
+                    finalData.put(ds, AppliedLeaveItem);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "convertAppliedLeavesItemsString: " + e);
+        }
+        Log.d(DEBUG_TAG, "convertAppliedleavesItemsString: finalData " + finalData);
+        return finalData;
+    }
+
+
+    private AppliedLeavesItem convertAppliedLeavesItemItem(JSONObject item) {
+        AppliedLeavesItem appliedLeavesItem = new AppliedLeavesItem();
+        String EndTime = "";
+        Date ScheduleDate = new Date();
+        String StartTime = "";
+        String s = "";
+        long l;
+        try {
+            if (item.getString("EndTime").length() > 6) {
+                s = item.getString("EndTime").substring(6, item.getString("EndTime").length() - 2);
+                if (s.indexOf("+") > 0) s = s.substring(0, s.indexOf("+"));
+                l = Long.parseLong(s);
+                EndTime = new Date(l).getHours() + ":" + new Date(l).getMinutes();
+            } else {
+                EndTime = item.getString("EndTime");
+            }
+            if (item.getString("StartTime").length() > 6) {
+                s = item.getString("StartTime").substring(6, item.getString("StartTime").length() - 2);
+                if (s.indexOf("+") > 0) s = s.substring(0, s.indexOf("+"));
+                l = Long.parseLong(s);
+                StartTime = new Date(l).getHours() + ":" + new Date(l).getMinutes();
+            } else {
+                StartTime = item.getString("StartTime");
+            }
+            s = item.getString("ScheduleDate").substring(6, item.getString("ScheduleDate").length() - 2);
+            if (s.indexOf("+") > 0) s = s.substring(0, s.indexOf("+"));
+            l = Long.parseLong(s);
+            ScheduleDate = new Date(l);
+
+
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "convertAppliedLeavesItem: " + e);
+        }
+        try {
+            Log.d(DEBUG_TAG, "convertAppliedLeaveItem: yesss " + EndTime + " ------ " + StartTime);
+            appliedLeavesItem = new AppliedLeavesItem(
+                    item.getString("AvailableLeaves"),
+                    item.getString("IsHalfdayAllowed"),
+                    item.getString("LeaveID"),
+                    item.getString("LeaveName"),
+                    item.getString("MaximumNoOfDays"),
+                    item.getString("MinimumNoOfDays"),
+                    item.getString("ShortName"),
+                    item.getString("ApplicationID"),
+                    item.getString("AppliedByID"),
+                    item.getString("AppliedByName"),
+                    item.getString("ApprovalStatus"),
+                    item.getString("Comment"),
+                    item.getString("LeaveAppliedDate"),
+                    item.getString("LeaveDateFrom"),
+                    item.getString("LeaveDateTo"),
+                    item.getString("LeaveRequestSentTo"),
+                    item.getString("LeaveStatusID"),
+                    item.getString("Reason")
+
+            );
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "convertAppliedLeavesItem: " + e);
+        }
+        return appliedLeavesItem;
+    }
+
+    public String appliedLeavesItemstoJson(List<AppliedLeavesItem> duties) {
+
+        Iterator<AppliedLeavesItem> it = duties.iterator();
+        String send = "{'DataList':[";
+        boolean firstIt = false;
+        while (it.hasNext()) {
+            if (firstIt) send += ",";
+            firstIt = true;
+            AppliedLeavesItem appliedLeavesItem = it.next();
+            Log.d("yes", "coverter: " + appliedLeavesItem.getReason());
+            send += "{'AvailableLeaves':'" + appliedLeavesItem.getAvailableLeaves();
+            send += "','IsHalfdayAllowed':'" + appliedLeavesItem.getIsHalfdayAllowed();
+            send += "','LeaveID':'" + appliedLeavesItem.getLeaveID();
+            send += "','LeaveName':'" + appliedLeavesItem.getLeaveName();
+            send += "','MaximumNoOfDays':'" + appliedLeavesItem.getMaximumNoOfDays();
+            send += "','MinimumNoOfDays':'" + appliedLeavesItem.getMinimumNoOfDays();
+            send += "','ShortName':'" + appliedLeavesItem.getShortName();
+            send += "','ApplicationID':'" + appliedLeavesItem.getApplicationID();
+            send += "','AppliedByID':'" + appliedLeavesItem.getAppliedByID();
+            send += "','AppliedByName':'" + appliedLeavesItem.getAppliedByName();
+            send += "','ApprovalStatus':'" + appliedLeavesItem.getApprovalStatus();
+            send += "','Comment':'" + appliedLeavesItem.getComment();
+            send += "','LeaveAppliedDate':'" + appliedLeavesItem.getLeaveAppliedDate();
+            send += "','LeaveDateFrom':'" + appliedLeavesItem.getLeaveDateFrom();
+            send += "','LeaveDateTo':'" + appliedLeavesItem.getLeaveDateTo();
+            send += "','LeaveRequestSentTo':'" + appliedLeavesItem.getLeaveRequestSentTo();
+            send += "','LeaveStatusID':'" + appliedLeavesItem.getLeaveStatusID();
+            send += "','Reason':'" + appliedLeavesItem.getReason() + "'}";
+        }
+        send += "]}";
+
+        Log.d(DEBUG_TAG, "appliedleavesItemstoJson: " + send);
+        return send;
+    }
+
+
+    //internal exam single code
     public Map<String, List<InternalExamItem>> convertInternalExamSingleItemsString(String extrs) {
 
         Map<String, List<InternalExamItem>> finalData = new LinkedHashMap<String, List<InternalExamItem>>();;

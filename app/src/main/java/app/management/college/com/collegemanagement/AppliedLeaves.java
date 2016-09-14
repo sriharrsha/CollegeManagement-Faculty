@@ -52,8 +52,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import app.management.college.com.collegemanagement.model.AppliedLeavesItem;
 import app.management.college.com.collegemanagement.model.GlobalData;
-import app.management.college.com.collegemanagement.model.InternalExamItem;
 import app.management.college.com.collegemanagement.model.util.Converter;
 import app.management.college.com.collegemanagement.util.CredentialManager;
 import app.management.college.com.collegemanagement.util.ErrorToaster;
@@ -89,8 +89,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
     //Initialize calendar with date
     Calendar currentCalendar = Calendar.getInstance(Locale.getDefault());
     Calendar currentTime = Calendar.getInstance(Locale.getDefault());
-    Map<Date, List<InternalExamItem>> finalData;
-    Map<String, List<InternalExamItem>> finalSData = null;
+    Map<String, List<AppliedLeavesItem>> finalSData = null;
     private CredentialManager credentialManager;
 
     @Override
@@ -231,9 +230,9 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                     singleD += cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR);
                     if (finalSData != null && finalSData.containsKey(ds)) {
                         Intent i = new Intent(AppliedLeaves.this, AppliedLeavesDetails.class);
-                        List<InternalExamItem> examItems = finalSData.get(ds);
-                        Log.d(DEBUG_TAG, "onDateSelected: " + examItems.get(0).getExamID());
-                        String examItemsString = new Converter().internalExamItemstoJson(examItems);
+                        List<AppliedLeavesItem> examItems = finalSData.get(ds);
+                        Log.d(DEBUG_TAG, "onDateSelected: " + examItems.get(0).getReason());
+                        String examItemsString = new Converter().appliedLeavesItemstoJson(examItems);
                         Log.d(DEBUG_TAG, "onDateSelected: examItemsString " + examItemsString);
                         i.putExtra("examItemsString", examItemsString);
                         i.putExtra("dateTitle", singleD);
@@ -355,7 +354,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                 credentialManager.setInternalExamsCache("");
                 Log.d("applied", "setTheAppliedLeavesScreen: " + dataList);
             } else {
-                Map<String, List<InternalExamItem>> obj = new Converter().convertAppliedLeavesItemsString(result);
+                Map<String, List<AppliedLeavesItem>> obj = new Converter().convertAppliedLeavesItemsString(result);
                 finalSData = obj;
 
                 currentMonth = currentCalendar.get(Calendar.MONTH);
