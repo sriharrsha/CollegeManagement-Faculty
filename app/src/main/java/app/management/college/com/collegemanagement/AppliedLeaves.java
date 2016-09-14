@@ -163,7 +163,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
             makeNetworkCall();
         } else if(internalExamsCache != null && internalExamsCache != "") {
             Log.d(DEBUG_TAG, "invigilationDetailsCache: " + internalExamsCache);
-            setTheInternalExamScreen(internalExamsCache);
+            setTheAppliedLeavesScreen(internalExamsCache);
             setShowingCalander(from);
             setPickers();
             calendarView.refreshCalendar(showingCalander);
@@ -201,10 +201,6 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
 
             }
         };
-
-
-
-
 
 
 
@@ -346,7 +342,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
         if(tasks != -1) ((TextView) findViewById(R.id.tasksCount)).setText("" + tasks);
     }
 
-    private void setTheInternalExamScreen(String result) {
+    private void setTheAppliedLeavesScreen(String result) {
 
         try {
             currentCalendar = Calendar.getInstance(Locale.getDefault());
@@ -357,9 +353,9 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                 setTheTasks(null,null,0);
                 finalSData = null;
                 credentialManager.setInternalExamsCache("");
-                Log.d("applied", "setTheInternalExamScreen: " + dataList);
+                Log.d("applied", "setTheAppliedLeavesScreen: " + dataList);
             } else {
-                Map<String, List<InternalExamItem>> obj = new Converter().convertInternalExamsItemsString(result);
+                Map<String, List<InternalExamItem>> obj = new Converter().convertAppliedLeavesItemsString(result);
                 finalSData = obj;
 
                 currentMonth = currentCalendar.get(Calendar.MONTH);
@@ -375,16 +371,16 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
         } catch (JSONException e) {
             error = e;
 //            Toast.makeText(InternalExams.this, "No Tasks in given Date range", Toast.LENGTH_SHORT).show();
-            Log.d(DEBUG_TAG, "setTheInternalExamScreen: " + e);
+            Log.d(DEBUG_TAG, "setTheAppliedLeavesScreen: " + e);
         } catch (ArrayIndexOutOfBoundsException e) {
             error = e;
 //            Toast.makeText(InternalExams.this, "No Tasks in given Date range", Toast.LENGTH_SHORT).show();
-            Log.e(DEBUG_TAG, "setTheInternalExamScreen: " + e);
-            Log.d(DEBUG_TAG, "setTheInternalExamScreen: " + e.getStackTrace().toString());
+            Log.e(DEBUG_TAG, "setTheAppliedLeavesScreen: " + e);
+            Log.d(DEBUG_TAG, "setTheAppliedLeavesScreen: " + e.getStackTrace().toString());
         }
         catch (Exception e) {
             error = e;
-            Log.d(DEBUG_TAG, "setTheInternalExamScreen: " + e);
+            Log.d(DEBUG_TAG, "setTheAppliedLeavesScreen: " + e);
         } finally {
             new ErrorToaster().toastError(error,ctx);
             error = null;
@@ -527,7 +523,7 @@ public class AppliedLeaves extends AppCompatActivity implements Serializable {
                 if(resultJSON.getInt("ServiceResult") == 0) {
                     credentialManager.setInternalExamsCache(result);
                     credentialManager.setInternalExamsFromCache("01-" + (fromDatePicker.getMonth() + 1) + "-" + fromDatePicker.getYear());
-                    setTheInternalExamScreen(result);
+                    setTheAppliedLeavesScreen(result);
                     Log.d("applied leave ", "onPostExecute: result " + result);
                     Log.d(DEBUG_TAG, "onPostExecute: from network" );
                 } else {

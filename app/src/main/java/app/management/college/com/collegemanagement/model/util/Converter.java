@@ -1,26 +1,10 @@
 package app.management.college.com.collegemanagement.model.util;
 
-import android.text.TextUtils;
-import android.util.JsonReader;
-import android.util.JsonToken;
-import android.util.JsonWriter;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Formatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import app.management.college.com.collegemanagement.model.ClassData;
 import app.management.college.com.collegemanagement.model.ExternalExamItem;
@@ -370,6 +351,47 @@ public class Converter {
     }
 
     public Map<String, List<InternalExamItem>> convertInternalExamsItemsString(String result) {
+
+        Map<String, List<InternalExamItem>> finalData = new LinkedHashMap<String, List<InternalExamItem>>();
+        ;
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            JSONArray dataList = resultJSON.getJSONArray("DataList");
+            for (int i = 0; i < dataList.length(); i++) {
+
+
+                JSONObject data = (JSONObject) dataList.get(i);
+                Log.d(DEBUG_TAG, "convertInternalExamsItemsString: yesss " + data);
+                String s = data.getString("ScheduleDate").substring(6, data.getString("ScheduleDate").length() - 2);
+                if (s.indexOf("+") > 0) s = s.substring(0, s.indexOf("+"));
+                long l = Long.parseLong(s);
+                Date d = new Date(l);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(d);
+                String month = "" + (cal.get(Calendar.MONTH));
+                String ds = keyFormatter.format(cal.getTime());
+
+                List<InternalExamItem> InternalExamItem = new ArrayList<>();
+                if (finalData.size() == 0) {
+                    InternalExamItem.add(convertInternalExamItem(data));
+                    finalData.put(ds, InternalExamItem);
+                } else if (!finalData.containsKey(ds)) {
+                    InternalExamItem.add(convertInternalExamItem(data));
+                    finalData.put(ds, InternalExamItem);
+                } else if (finalData.containsKey(ds)) {
+                    InternalExamItem = finalData.get(ds);
+                    InternalExamItem.add(convertInternalExamItem(data));
+                    finalData.put(ds, InternalExamItem);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(DEBUG_TAG, "convertInternalExamsItemsString: " + e);
+        }
+        Log.d(DEBUG_TAG, "convertInternalExamsItemsString: finalData " + finalData);
+        return finalData;
+    }
+
+    public Map<String, List<InternalExamItem>> convertAppliedLeavesItemsString(String result) {
 
         Map<String, List<InternalExamItem>> finalData = new LinkedHashMap<String, List<InternalExamItem>>();;
         try {
